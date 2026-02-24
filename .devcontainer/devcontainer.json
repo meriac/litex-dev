@@ -1,0 +1,22 @@
+{
+  "name": "LiteX Development (RISC-V)",
+  "image": "ghcr.io/meriac/litex-dev-riscv:amd64",
+  "containerEnv": {
+    "HOSTNAME": "litex-dev"
+  },
+  "features": {
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash",
+            "args": ["-l"]
+          }
+        }
+      }
+    }
+  }
+}

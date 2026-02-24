@@ -1,0 +1,20 @@
+#---
+FROM localhost/litex-dev
+
+# Link this image to github.com repository
+ARG GITHUB_LINK
+LABEL org.opencontainers.image.source ${GITHUB_LINK}
+
+# Install dev tools
+RUN \
+	apt-get update -qq \
+	&& apt-get -y install --no-install-recommends \
+		gcc-riscv64-unknown-elf zlib1g-dev \
+	&& apt-get autoclean && apt-get clean && apt-get -y autoremove \
+	&& rm -rf /var/lib/apt/lists/* \
+	\
+	&& pip install meson ninja \
+	&& pip cache purge
+
+WORKDIR /workspaces
+CMD ["/bin/bash", "-i"]

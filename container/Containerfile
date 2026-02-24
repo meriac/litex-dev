@@ -1,0 +1,48 @@
+#---
+FROM python:3-slim AS litex-dev
+
+# Link this image to github.com repository
+ARG GITHUB_LINK
+LABEL org.opencontainers.image.source ${GITHUB_LINK}
+
+# Where to install LiteX to
+ENV PREFIX=/opt/litex
+
+# Get a fresh LiteX setup script
+ARG LITEX_SETUP_PY=litex_setup.py
+ARG LITEX_SETUP_REPO=https://github.com/enjoy-digital/litex.git
+
+# Enable unattended Debian installer
+ENV DEBIAN_FRONTEND=noninteractive
+# Suppress pip warning about running as root
+ENV PIP_ROOT_USER_ACTION=ignore
+
+# Install dev tools
+RUN \
+	apt-get update -qq \
+  	&& apt-get -y install --no-install-recommends \
+		git make wget \
+  	&& apt-get autoclean && apt-get clean && apt-get -y autoremove \
+  	&& rm -rf /var/lib/apt/lists/*
+
+# Add bash configuration
+WORKDIR /root
+COPY bashrc .bashrc
+COPY bash_aliases .bash_aliases
+
+# Change shell, download the LiteX setup script and make it executable, install LiteX and trim fat
+RUN \
+	. ~/.bashrc \
+	&& pip install --upgrade pip \
+	\ 
+	&& mkdir -p "$PREFIX" \
+    && git clone --recursive ${LITEX_SETUP_REPO} ${PREFIX}/litex \
+	&& cd ${PREFIX} \
+	&& ln -s litex/${LITEX_SETUP_PY} \
+	&& python3 "$LITEX_SETUP_PY" --init --install --config=standard \
+	&& rm -rf `find . -type d -regextype egrep -regex '.*/(test|tests|tester|\.git|__pycache__)$'` \
+	\
+	&& pip cache purge
+
+WORKDIR /workspaces
+CMD ["/bin/bash", "-i"]

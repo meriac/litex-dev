@@ -1,0 +1,37 @@
+# Enable color support
+export CLICOLOR=1
+export TERM=xterm-256color
+
+# Colored prompt
+PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+
+# Enable color for ls
+alias ls='ls --color=auto'
+alias ll='ls -la --color=auto'
+alias la='ls -A --color=auto'
+
+# Enable color for grep
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# Git color settings
+git config --global color.ui auto
+git config --global color.branch auto
+git config --global color.diff auto
+git config --global color.status auto
+
+# Add local bin to PATH
+export PATH="$PREFIX_BIN:$PATH"
+
+# Set temp directory variables
+export TMPDIR="$HOME/.tmp"
+export TEMP="$TMPDIR"
+export TMP="$TMPDIR"
+# Create user temp directory
+mkdir -p "$TMP"
+
+# Source bash aliases if present
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
